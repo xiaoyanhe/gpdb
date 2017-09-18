@@ -61,6 +61,7 @@ groups:
   - MM_gpinitsystem
   - MU_check_centos
   - MM_gpinitstandby
+  - MM_gp_upgrade
   - gate_mm_misc_end
 ################################
   - gate_nightly_start
@@ -186,6 +187,7 @@ groups:
   - MM_gpinitsystem
   - MU_check_centos
   - MM_gpinitstandby
+  - MM_gp_upgrade
   - gate_mm_misc_end
 
 - name: G:Nightly
@@ -2049,6 +2051,7 @@ jobs:
     - MM_gpcheck
     - MM_pt-rebuild
     - MM_gpinitstandby
+    - MM_gp_upgrade
     - MM_gppkg
     - MM_gprecoverseg
     trigger: true
@@ -2061,6 +2064,7 @@ jobs:
     - MM_gpcheck
     - MM_pt-rebuild
     - MM_gpinitstandby
+    - MM_gp_upgrade
     - MM_gppkg
     - MM_gprecoverseg
   # Not used by icw group, but is passed through
@@ -2692,6 +2696,7 @@ jobs:
     - MM_gprecoverseg
     - MM_gpexpand
     - MM_gpinitstandby
+    - MM_gp_upgrade
     - DPM_gptransfer-43x-to-5x
     - DPM_gptransfer-5x-to-5x
     - cs-filerep-schema-topology-crashrecov
