@@ -169,6 +169,9 @@ struct ResGroupControl
 	ResGroupData	groups[1];
 };
 
+/* hooks */
+resgroup_assign_hook_type resgroup_assign_hook = NULL;
+
 /* static variables */
 
 static ResGroupControl *pResGroupControl = NULL;
@@ -1406,7 +1409,11 @@ retry:
 	Assert(selfIsUnassigned());
 
 	/* always find out the up-to-date resgroup id */
-	groupId = GetResGroupIdForRole(GetUserId());
+	if (resgroup_assign_hook)
+		groupId = resgroup_assign_hook();
+	else
+		groupId = GetResGroupIdForRole(GetUserId());
+
 	if (groupId == InvalidOid)
 		groupId = superuser() ? ADMINRESGROUP_OID : DEFAULTRESGROUP_OID;
 
