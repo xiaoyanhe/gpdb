@@ -1356,7 +1356,14 @@ GetResGroupIdForName(char *name, LOCKMODE lockmode)
 	ScanKeyData scankey;
 	SysScanDesc scan;
 	HeapTuple	tuple;
+	ResourceOwner owner = NULL;
 	Oid			rsgid;
+
+	if (CurrentResourceOwner == NULL)
+	{
+		owner = ResourceOwnerCreate(NULL, "GetResGroupIdForName");
+		CurrentResourceOwner = owner;
+	}
 
 	rel = heap_open(ResGroupRelationId, lockmode);
 
@@ -1376,6 +1383,12 @@ GetResGroupIdForName(char *name, LOCKMODE lockmode)
 
 	systable_endscan(scan);
 	heap_close(rel, lockmode);
+
+	if (owner)
+	{
+		CurrentResourceOwner = NULL;
+		ResourceOwnerDelete(owner);
+	}
 
 	return rsgid;
 }
