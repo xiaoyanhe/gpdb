@@ -103,7 +103,8 @@ extern double gp_resource_group_memory_limit;
  * Resource Group assignment hook.
  *
  * This hook can be set by an extension to control how queries are assigned to
- * a resource group.
+ * a resource group. A hook implementation should return the Oid of the resource
+ * group to assign the transaction to, or InvalidOid to indicate an error.
  */
 typedef Oid (*resgroup_assign_hook_type)(void);
 extern PGDLLIMPORT resgroup_assign_hook_type resgroup_assign_hook;

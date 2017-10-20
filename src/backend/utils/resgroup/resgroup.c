@@ -1393,6 +1393,26 @@ putSlot(void)
 }
 
 /*
+ * Pick a resource group for the current transaction
+ */
+static Oid
+ResGroupAssign()
+{
+	Oid				 groupId;
+
+	if (resgroup_assign_hook)
+		groupId = resgroup_assign_hook();
+
+	if (groupId == InvalidOid){
+		groupId = GetResGroupIdForRole(GetUserId());
+
+		if (groupId == InvalidOid)
+			groupId = superuser() ? ADMINRESGROUP_OID : DEFAULTRESGROUP_OID;
+	}
+	return groupId;
+}
+
+/*
  * Acquire a resource group slot
  *
  * Call this function at the start of the transaction.
@@ -1409,13 +1429,7 @@ retry:
 	Assert(selfIsUnassigned());
 
 	/* always find out the up-to-date resgroup id */
-	if (resgroup_assign_hook)
-		groupId = resgroup_assign_hook();
-	else
-		groupId = GetResGroupIdForRole(GetUserId());
-
-	if (groupId == InvalidOid)
-		groupId = superuser() ? ADMINRESGROUP_OID : DEFAULTRESGROUP_OID;
+	groupId = ResGroupAssign();
 
 	LWLockAcquire(ResGroupLock, LW_EXCLUSIVE);
 	group = ResGroupHashFind(groupId, false);
