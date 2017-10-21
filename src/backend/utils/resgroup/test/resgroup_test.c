@@ -5,26 +5,15 @@
 
 #include "../resgroup.c"
 
-Oid GetResGroupIdForRole(Oid user_id)
-{
-	check_expected(user_id);
-	return (Oid)mock();
-}
-
-Oid GetUserId(void)
-{
-	return (Oid)mock();
-}
-
 void
-test_default(void **state)
+test__GetResGroupForTxn_when_role_id_is_invalid(void **state)
 {
-	will_return(GetUserId, 1001);
+	will_return(GetUserId, 0x1001);
 
-	expect_value(GetResGroupIdForRole, user_id, 1001);
-	will_return(GetResGroupIdForRole, 6401);
-	Oid actualGroupId = ResGroupAssign();
-	assert_int_equal(actualGroupId, 6401);
+	expect_value(GetResGroupIdForRole, roleid, 0x1001);
+	will_return(GetResGroupIdForRole, InvalidOid);
+
+	assert_int_equal(GetResGroupForTxn(), DEFAULTRESGROUP_OID);
 }
 
 int
@@ -33,7 +22,7 @@ main(int argc, char *argv[])
 	cmockery_parse_arguments(argc, argv);
 
 	const UnitTest tests[] = {
-			unit_test(test_default),
+			unit_test(test__GetResGroupForTxn_when_role_id_is_invalid),
 	};
 
 	run_tests(tests);
